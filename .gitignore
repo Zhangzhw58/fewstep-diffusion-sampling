@@ -1,15 +1,17 @@
 # Large or regenerable files: never commit (GitHub rejects files > 100 MB)
-checkpoints/
-fid/
+shared_framework/checkpoints/
+models/
+data/
 outputs/
+.venv/
+*.zip
 *.bin
 *.safetensors
-*.pkl
-*.npz
 *.pt
 *.pth
+*.pkl
+*.npz
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
 .vscode/
 .idea/

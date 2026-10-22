@@ -1,4 +1,4 @@
-"""Correctness checks for custom timestep grids (set_custom_timesteps in sampler.py).
+"""Correctness checks for custom timestep grids (set_custom_timesteps in shared_framework/sampler.py).
 
 1. UniPC: a custom grid equal to UniPC's own default grid must reproduce the default
    sampler bit for bit (same timesteps, same sigmas, identical images).
@@ -18,7 +18,7 @@ import numpy as np
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))  # sampler.py lives at the repository root
+sys.path.insert(0, str(ROOT / "shared_framework"))
 import sampler as S  # noqa: E402
 
 SEEDS = list(range(16))
@@ -41,7 +41,7 @@ def report(ok, msg):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default=str(ROOT / "checkpoints/google-ddpm-cifar10-32"))
+    ap.add_argument("--model", default=str(ROOT / "shared_framework/checkpoints/google-ddpm-cifar10-32"))
     ap.add_argument("--reference", default=None, help="original sampler.py for a regression check")
     a = ap.parse_args()
     global DEV

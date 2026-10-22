@@ -1,0 +1,7 @@
+﻿method,n_steps,schedule,fid_clean,n_fake,reference_stats
+UniPC,5,default,54.580086525703564,5000,clean-fid CIFAR-10 train 32x32
+UniPC,5,logsnr_power,60.21607327065641,5000,clean-fid CIFAR-10 train 32x32
+UniPC,10,default,31.06697588215684,5000,clean-fid CIFAR-10 train 32x32
+UniPC,10,logsnr_power,22.86374999461418,5000,clean-fid CIFAR-10 train 32x32
+UniPC,20,default,23.882902503826813,5000,clean-fid CIFAR-10 train 32x32
+UniPC,20,logsnr_power,19.62205113148451,5000,clean-fid CIFAR-10 train 32x32

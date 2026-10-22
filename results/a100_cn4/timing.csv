@@ -1,0 +1,7 @@
+﻿method,n_steps,schedule,gamma,n_samples,total_sampling_sec,seconds_per_image,device,batch_size
+DPM-Solver++,5,default,,5000,12.471568742301315,0.002494313748460263,cuda,32
+DPM-Solver++,5,logsnr_power,1.0,5000,12.450643633957952,0.0024901287267915903,cuda,32
+DPM-Solver++,10,default,,5000,23.627131329849362,0.0047254262659698724,cuda,32
+DPM-Solver++,10,logsnr_power,1.0,5000,23.890642202459276,0.004778128440491855,cuda,32
+DPM-Solver++,20,default,,5000,46.634764494374394,0.009326952898874879,cuda,32
+DPM-Solver++,20,logsnr_power,1.0,5000,46.67432149895467,0.009334864299790933,cuda,32
