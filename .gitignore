@@ -1,0 +1,15 @@
+# Large or regenerable files: never commit (GitHub rejects files > 100 MB)
+checkpoints/
+fid/
+outputs/
+*.bin
+*.safetensors
+*.pkl
+*.npz
+*.pt
+*.pth
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+.idea/
