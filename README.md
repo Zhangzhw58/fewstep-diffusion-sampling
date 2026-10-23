@@ -6,26 +6,26 @@
 - **只改**：求解器（DPM-Solver++、UniPC，均为二阶）、步数 NFE ∈ {5, 10, 20}、时间步网格（默认 linspace，或 log-SNR 幂次网格 γ）。
 - **协议**：γ 只在 16 个验证种子上挑选（以 100 步 DPM-Solver++ 为参考算像素 MSE），最终在 5,000 个留出测试种子（1000–5999）上用 clean-FID 和单张耗时评估。参数统一写在 `configs/experiment.json`。
 
-## 目录与分工
+## 目录说明
 
-| 路径 | 作用 | 负责人 | 修改规则 |
-|---|---|---|---|
-| `shared_framework/sampler.py` | 共用推理接口：`load_pipeline`、`make_scheduler`、`logsnr_power_timesteps`、`set_custom_timesteps`（UniPC 自定义网格，zzw 贡献）、`sample_batch` | 组长 | 共用代码，**改之前先在群里说**；改完跑 `scripts/check_custom_timesteps.py` |
-| `shared_framework/README.md`、`requirements.txt` | 框架说明与最小依赖 | 组长 | |
-| `shared_framework/checkpoints/` | 模型权重（**不进仓库**） | — | 用 `scripts/download_model.py` 下载 |
-| `configs/experiment.json` | 实验协议：NFE、验证种子、γ 候选、测试种子、批大小 | 组长 | 改它等于改实验协议，**须全组同意**，并在提交说明里写明原因 |
-| `requirements-project.txt` | 实验所需依赖（diffusers 0.31.0、clean-fid 0.1.35） | 组长 | |
-| `scripts/run_experiment.py` | DPM-Solver++ 实验：smoke → validate → generate → fid | 组长 | |
-| `scripts/run_unipc.py` | UniPC 实验，流程与上面完全相同，只换求解器；输出文件带 `_unipc` 后缀 | zzw | 与 `run_experiment.py` 保持同一协议 |
-| `scripts/make_deliverables.py` | 生成结果图、样本拼图和小结（目前只画 DPM-Solver++） | 组长 | |
-| `scripts/smoke.py`、`smoke_custom.py` | 早期冒烟测试 | 组长 | |
-| `scripts/download_model.py` | 下载固定版本的模型 | zzw | |
-| `scripts/check_custom_timesteps.py` | 自定义时间网格的正确性检验（18 项） | zzw | 改 `sampler.py` 后必须通过 |
-| `results/rtx3070_laptop_dpmpp/` | 组长在 RTX 3070 笔记本上的 DPM-Solver++ 结果 | 组长 | 只追加，不改已有结果 |
-| `results/a100_cn4/` | 两个求解器在同一张 A100 上的结果与对比表 | zzw | 只追加，不改已有结果 |
-| `outputs/` | 运行时生成的样图、日志、中间指标（**不进仓库**） | — | 需要保留的结果复制到 `results/<机器>_<内容>/` |
-| `paper/`（待建） | 英文 CVPR 双栏报告 | 全组 | |
-| `docs/` | 项目文档；`基于预训练扩散模型的少步采样：DPM-Solver++ 与 UniPC 的对比研究.pdf` 是执行手册（研究问题、实验设计、分工、时间安排、提交清单） | 组长 | 新文档直接放这里；手册改版时在提交说明里写明改了什么 |
+| 路径 | 作用 | 修改规则 |
+|---|---|---|
+| `shared_framework/sampler.py` | 共用推理接口：`load_pipeline`、`make_scheduler`、`logsnr_power_timesteps`、`set_custom_timesteps`、`sample_batch` | 共用代码，**改之前先在群里说**；改完跑 `scripts/check_custom_timesteps.py` |
+| `shared_framework/README.md`、`requirements.txt` | 框架说明与最小依赖 | |
+| `shared_framework/checkpoints/` | 模型权重（**不进仓库**） | 用 `scripts/download_model.py` 下载 |
+| `configs/experiment.json` | 实验协议：NFE、验证种子、γ 候选、测试种子、批大小 | 改它等于改实验协议，**须全组同意**，并在提交说明里写明原因 |
+| `requirements-project.txt` | 实验所需依赖（diffusers 0.31.0、clean-fid 0.1.35） | |
+| `scripts/run_experiment.py` | DPM-Solver++ 实验：smoke → validate → generate → fid | |
+| `scripts/run_unipc.py` | UniPC 实验，流程与上面完全相同，只换求解器；输出文件带 `_unipc` 后缀 | 与 `run_experiment.py` 保持同一协议 |
+| `scripts/make_deliverables.py` | 生成结果图、样本拼图和小结（目前只画 DPM-Solver++） | |
+| `scripts/smoke.py`、`smoke_custom.py` | 早期冒烟测试 | |
+| `scripts/download_model.py` | 下载固定版本的模型 | |
+| `scripts/check_custom_timesteps.py` | 自定义时间网格的正确性检验（18 项） | 改 `sampler.py` 后必须通过 |
+| `results/rtx3070_laptop_dpmpp/` | 组长在 RTX 3070 笔记本上的 DPM-Solver++ 结果 | 只追加，不改已有结果 |
+| `results/a100_cn4/` | 两个求解器在同一张 A100 上的结果与对比表 | 只追加，不改已有结果 |
+| `outputs/` | 运行时生成的样图、日志、中间指标（**不进仓库**） | 需要保留的结果复制到 `results/<机器>_<内容>/` |
+| `paper/`（待建） | 英文 CVPR 双栏报告 | |
+| `docs/` | 项目文档；`基于预训练扩散模型的少步采样：DPM-Solver++ 与 UniPC 的对比研究.pdf` 是执行手册（研究问题、实验设计、分工、时间安排、提交清单） | 新文档直接放这里；手册改版时在提交说明里写明改了什么 |
 
 ## 快速开始
 
