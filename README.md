@@ -1,43 +1,69 @@
-# CIFAR-10 few-step sampling: DPM-Solver++ vs UniPC (group project)
+# Few-Step Diffusion Sampling: DPM-Solver++ vs UniPC
 
-- `shared_framework/` — shared sampler (`sampler.py`: DPM-Solver++ / UniPC, custom log-SNR grids via `set_custom_timesteps`). Download the model with `python scripts/download_model.py`.
-- `scripts/run_experiment.py` — DPM-Solver++ experiment (team lead); `scripts/run_unipc.py` — identical protocol for UniPC (zzw). Both read `configs/experiment.json`.
-- `scripts/check_custom_timesteps.py` — correctness checks for the custom timestep grids (18 checks, all pass on diffusers 0.31.0).
-- `results/rtx3070_laptop_dpmpp/` — the team lead's DPM-Solver++ run (RTX 3070 laptop).
-- `results/a100_cn4/` — both solvers on the same A100; see its README for the comparison table.
-- Large files (checkpoints, generated images, `.venv`, zips) are not committed; see `.gitignore`.
+少步扩散采样中求解器与时间步分配策略的比较研究（模式识别课程小组作业）。
 
----
+- **固定**：预训练 `google/ddpm-cifar10-32`（像素空间 DDPM，32×32，无条件，预测 ε），版本 `267b167dc01f0e4e61923ea244e8b988f84deb80`，权重全程不动。
+- **只改**：求解器（DPM-Solver++、UniPC，均为二阶）、步数 NFE ∈ {5, 10, 20}、时间步网格（默认 linspace，或 log-SNR 幂次网格 γ）。
+- **协议**：γ 只在 16 个验证种子上挑选（以 100 步 DPM-Solver++ 为参考算像素 MSE），最终在 5,000 个留出测试种子（1000–5999）上用 clean-FID 和单张耗时评估。参数统一写在 `configs/experiment.json`。
 
-# DPM-Solver CIFAR-10 experiment
+## 目录与分工
 
-This folder contains an isolated experiment for route B: pretrained CIFAR-10 diffusion sampling with DPM-Solver++ only. It does not run UniPC. A reusable scheduler interface and the local checkpoint are under `shared_framework/` for the teammate who will add/run UniPC.
+| 路径 | 作用 | 负责人 | 修改规则 |
+|---|---|---|---|
+| `shared_framework/sampler.py` | 共用推理接口：`load_pipeline`、`make_scheduler`、`logsnr_power_timesteps`、`set_custom_timesteps`（UniPC 自定义网格，zzw 贡献）、`sample_batch` | 组长 | 共用代码，**改之前先在群里说**；改完跑 `scripts/check_custom_timesteps.py` |
+| `shared_framework/README.md`、`requirements.txt` | 框架说明与最小依赖 | 组长 | |
+| `shared_framework/checkpoints/` | 模型权重（**不进仓库**） | — | 用 `scripts/download_model.py` 下载 |
+| `configs/experiment.json` | 实验协议：NFE、验证种子、γ 候选、测试种子、批大小 | 组长 | 改它等于改实验协议，**须全组同意**，并在提交说明里写明原因 |
+| `requirements-project.txt` | 实验所需依赖（diffusers 0.31.0、clean-fid 0.1.35） | 组长 | |
+| `scripts/run_experiment.py` | DPM-Solver++ 实验：smoke → validate → generate → fid | 组长 | |
+| `scripts/run_unipc.py` | UniPC 实验，流程与上面完全相同，只换求解器；输出文件带 `_unipc` 后缀 | zzw | 与 `run_experiment.py` 保持同一协议 |
+| `scripts/make_deliverables.py` | 生成结果图、样本拼图和小结（目前只画 DPM-Solver++） | 组长 | |
+| `scripts/smoke.py`、`smoke_custom.py` | 早期冒烟测试 | 组长 | |
+| `scripts/download_model.py` | 下载固定版本的模型 | zzw | |
+| `scripts/check_custom_timesteps.py` | 自定义时间网格的正确性检验（18 项） | zzw | 改 `sampler.py` 后必须通过 |
+| `results/rtx3070_laptop_dpmpp/` | 组长在 RTX 3070 笔记本上的 DPM-Solver++ 结果 | 组长 | 只追加，不改已有结果 |
+| `results/a100_cn4/` | 两个求解器在同一张 A100 上的结果与对比表 | zzw | 只追加，不改已有结果 |
+| `outputs/` | 运行时生成的样图、日志、中间指标（**不进仓库**） | — | 需要保留的结果复制到 `results/<机器>_<内容>/` |
+| `paper/`（待建） | 英文 CVPR 双栏报告 | 全组 | |
 
-## Hardware and environment
-- Tested device: NVIDIA GeForce RTX 3070 Laptop GPU, 8 GB VRAM.
-- Python environment: `.venv`; it uses the machine's existing PyTorch 2.9.0+cu128 via system site packages, while project-specific packages are kept in `.venv`.
-- Diffusers 0.31.0; model `google/ddpm-cifar10-32` at the commit recorded in `configs/experiment.json`.
-- Checkpoint is cached locally under `shared_framework/checkpoints/google-ddpm-cifar10-32/`.
+## 快速开始
 
-## Run order
-```powershell
-$py = '.\.venv\Scripts\python.exe'
-& $py .\scripts\run_experiment.py --phase smoke
-& $py .\scripts\run_experiment.py --phase validate
-& $py .\scripts\run_experiment.py --phase generate
-& $py .\scripts\run_experiment.py --phase fid
-& $py .\scripts\make_deliverables.py
+```bash
+git clone https://github.com/Zhangzhw58/fewstep-diffusion-sampling.git
+cd fewstep-diffusion-sampling
+# 先按本机 CUDA 安装 PyTorch，再装依赖
+pip install -r requirements-project.txt
+python scripts/download_model.py              # 模型 → shared_framework/checkpoints/
+python scripts/check_custom_timesteps.py      # 可选：确认时间网格功能正常
 ```
 
-The completed run uses a 100-step DPM-Solver++ reference, selects a log-SNR power-warp exponent on 16 validation seeds, then generates 5,000 held-out samples for each of six DPM-Solver++ configurations (5/10/20 steps, default and selected schedule). FID is computed against clean-fid's CIFAR-10 train 32×32 reference statistics. The validation score is pixel MSE to the 100-step DPM-Solver++ reference; this tuning proxy is not the final quality metric. `outputs/metrics/experiment_summary.md` documents results and limitations.
+连不上 Hugging Face 时先设置 `HF_ENDPOINT=https://hf-mirror.com`（PowerShell：`$env:HF_ENDPOINT="https://hf-mirror.com"`）。clean-fid 第一次运行会自动下载 CIFAR-10 参考统计和 Inception 权重。
 
-The complete experiment can also be started with `--phase all`; phases can be run separately to resume or inspect intermediate artifacts. Run from this directory. Model files are local and the default script does not download them.
+## 运行实验
 
-## Results and artifacts
-- Metrics: `outputs/metrics/fid.csv`, `timing.csv`, `validation_search.csv`, `selected_gamma.json`.
-- Charts and report-ready assets: `outputs/metrics/dpmpp_results.png`, `outputs/samples/contact_sheet_48.png`.
-- Saved generated images: six subfolders under `outputs/samples/`, 5,000 images per setting.
-- Shareable model/sampler package: `shared_framework_for_UniPC.zip` and the source folder `shared_framework/`.
+在仓库根目录执行（Windows 把 `python` 换成 `.\.venv\Scripts\python.exe`）：
 
-## Reusable interface for UniPC
-See `shared_framework/README.md`. It exposes `load_pipeline`, `make_scheduler(pipe, name='unipc')`, `sample_batch`, and custom log-SNR timesteps. The present experiment evaluates DPM-Solver++ only; UniPC was checked with one smoke sample solely to validate the handoff interface.
+```bash
+python scripts/run_experiment.py --phase all   # DPM-Solver++
+python scripts/run_unipc.py --phase all        # UniPC
+python scripts/make_deliverables.py            # DPM-Solver++ 的图表和小结
+```
+
+`--phase` 可选 `smoke`、`validate`、`generate`、`fid`、`all`，可以分阶段运行、断点续跑。单张 A100 上每个求解器全部阶段约 15 分钟（含 FID）。
+
+## 主要结果（A100，clean-FID ↓，5,000 张）
+
+| NFE | DPM++ 默认 | DPM++ log-SNR | UniPC 默认 | UniPC log-SNR |
+|---:|---:|---:|---:|---:|
+| 5 | 58.64 | 56.94 (γ=1.0) | **54.58** | 60.22 (γ=0.8) |
+| 10 | 31.68 | 23.89 (γ=1.0) | 31.07 | **22.86** (γ=0.8) |
+| 20 | 24.08 | 20.04 (γ=1.0) | 23.88 | **19.62** (γ=1.0) |
+
+耗时、讨论和注意事项见 `results/a100_cn4/README.md`。DPM++ 在 A100 和 RTX 3070 上的 FID 相差不超过 0.08，结果可以复现。
+
+## 协作约定
+
+- **分支**：`main` 保持可运行的稳定版本；各人在自己的分支开发（如 `unipc`、`dpmpp`、`paper`），完成后提 Pull Request 合并到 `main`。
+- **提交前**：`git status` 确认没有误加大文件；改了 `sampler.py` 就先跑 `scripts/check_custom_timesteps.py`。
+- **结果**：新结果放在 `results/<机器>_<内容>/`，附一个 README 说明硬件、软件版本和运行命令；不要覆盖别人已有的结果。
+- **不提交**：模型权重、生成的图片、`outputs/`、虚拟环境、压缩包、密钥（已写入 `.gitignore`）。

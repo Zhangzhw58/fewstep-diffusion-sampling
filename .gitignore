@@ -1,17 +1,46 @@
-# Large or regenerable files: never commit (GitHub rejects files > 100 MB)
+# ---- Large or regenerable files (GitHub rejects files > 100 MB) ----
 shared_framework/checkpoints/
 models/
 data/
 outputs/
-.venv/
 *.zip
+*.tar
+*.tar.gz
 *.bin
 *.safetensors
+*.ckpt
 *.pt
 *.pth
 *.pkl
 *.npz
+
+# ---- Python environments and caches ----
+.venv/
+venv/
+env/
 __pycache__/
 *.pyc
+.ipynb_checkpoints/
+
+# ---- Secrets (never commit) ----
+.env
+*.key
+
+# ---- Editors and OS ----
 .vscode/
 .idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- LaTeX build files (paper/) ----
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+paper/**/*.log
