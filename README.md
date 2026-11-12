@@ -17,6 +17,7 @@
 | `requirements-project.txt` | 实验所需依赖（diffusers 0.31.0、clean-fid 0.1.35） | |
 | `scripts/run_experiment.py` | DPM-Solver++ 实验：smoke → validate → generate → fid | |
 | `scripts/run_unipc.py` | UniPC 实验，流程与上面完全相同，只换求解器；输出文件带 `_unipc` 后缀 | 与 `run_experiment.py` 保持同一协议 |
+| `scripts/run_ablation_unipc.py` | 2026-11 消融：UniPC 一阶/二阶/去校正器与 DPM-Solver++ 一阶/二阶，验证选 γ，FID-1k/5k | |
 | `scripts/make_deliverables.py` | 生成结果图、样本拼图和小结（目前只画 DPM-Solver++） | |
 | `scripts/smoke.py`、`smoke_custom.py` | 早期冒烟测试 | |
 | `scripts/download_model.py` | 下载固定版本的模型 | |
@@ -24,6 +25,7 @@
 | `results/rtx3070_laptop_dpmpp/` | 组长在 RTX 3070 笔记本上的 DPM-Solver++ 结果 | 只追加，不改已有结果 |
 | `results/a100_cn4/` | 两个求解器在同一张 A100 上的结果与对比表 | 只追加，不改已有结果 |
 | `results/rtx3070_laptop_dpmpp_ablation_2026_11/` | 组长的新增消融（2026-11）：128 个种子选 γ、DPM-Solver++ 一阶与二阶，NFE 10，FID-1k；只放说明和指标，样图未入库 | 只追加，不改已有结果 |
+| `results/a100_cn5_ablation_2026_11/` | UniPC 对照消融 + 同机重跑 DPM-Solver++：5 种求解器（含一阶、去校正器）× NFE 5/10/20，128 个种子分别选 γ，FID-1k/5k | 只追加，不改已有结果 |
 | `outputs/` | 运行时生成的样图、日志、中间指标（**不进仓库**） | 需要保留的结果复制到 `results/<机器>_<内容>/` |
 | `paper/`（待建） | 英文 CVPR 双栏报告 | |
 | `docs/` | 项目文档；`基于预训练扩散模型的少步采样：DPM-Solver++ 与 UniPC 的对比研究.pdf` 是执行手册（研究问题、实验设计、分工、时间安排、提交清单） | 新文档直接放这里；手册改版时在提交说明里写明改了什么 |
