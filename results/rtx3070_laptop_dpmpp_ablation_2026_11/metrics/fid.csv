@@ -1,0 +1,7 @@
+﻿tag,solver_order,nfe,n_fake,fid_clean,reference
+order2_default,2,10,1000,56.146425618842386,clean-fid CIFAR-10 train 32x32
+order2_gamma0.8,2,10,1000,48.45392619842795,clean-fid CIFAR-10 train 32x32
+order1_default,1,10,1000,69.58202143664761,clean-fid CIFAR-10 train 32x32
+order1_gamma0.8,1,10,1000,71.71607484367246,clean-fid CIFAR-10 train 32x32
+gamma0.8_sensitivity,2,10,1000,48.45392619842795,clean-fid CIFAR-10 train 32x32
+gamma1.2_sensitivity,2,10,1000,46.92807038347047,clean-fid CIFAR-10 train 32x32

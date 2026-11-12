@@ -1,0 +1,7 @@
+﻿tag,solver_order,schedule,gamma,nfe,n_samples,seconds,sec_per_image,device
+order2_default,2,default,,10,1000,19.98251529999834,0.01998251529999834,cuda
+order2_gamma0.8,2,logsnr_power,0.8,10,1000,21.346902199999022,0.021346902199999022,cuda
+order1_default,1,default,,10,1000,19.320232300000498,0.019320232300000496,cuda
+order1_gamma0.8,1,logsnr_power,0.8,10,1000,18.9353615,0.018935361499999998,cuda
+gamma0.8_sensitivity,2,logsnr_power,0.8,10,1000,18.588947099997313,0.018588947099997314,cuda
+gamma1.2_sensitivity,2,logsnr_power,1.2,10,1000,18.85079390000101,0.01885079390000101,cuda

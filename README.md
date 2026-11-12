@@ -23,6 +23,7 @@
 | `scripts/check_custom_timesteps.py` | 自定义时间网格的正确性检验（18 项） | 改 `sampler.py` 后必须通过 |
 | `results/rtx3070_laptop_dpmpp/` | 组长在 RTX 3070 笔记本上的 DPM-Solver++ 结果 | 只追加，不改已有结果 |
 | `results/a100_cn4/` | 两个求解器在同一张 A100 上的结果与对比表 | 只追加，不改已有结果 |
+| `results/rtx3070_laptop_dpmpp_ablation_2026_11/` | 组长的新增消融（2026-11）：128 个种子选 γ、DPM-Solver++ 一阶与二阶，NFE 10，FID-1k；只放说明和指标，样图未入库 | 只追加，不改已有结果 |
 | `outputs/` | 运行时生成的样图、日志、中间指标（**不进仓库**） | 需要保留的结果复制到 `results/<机器>_<内容>/` |
 | `paper/`（待建） | 英文 CVPR 双栏报告 | |
 | `docs/` | 项目文档；`基于预训练扩散模型的少步采样：DPM-Solver++ 与 UniPC 的对比研究.pdf` 是执行手册（研究问题、实验设计、分工、时间安排、提交清单） | 新文档直接放这里；手册改版时在提交说明里写明改了什么 |
